@@ -1,0 +1,18 @@
+accessWidener	v1	named
+accessible	field	net/minecraft/client/gui/screen/Screen	drawables	Ljava/util/List;
+accessible	method	net/minecraft/client/gui/screen/Screen	addDrawableChild	(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;
+accessible	method	net/minecraft/client/gui/screen/Screen	addSelectableChild	(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;
+accessible	field	net/minecraft/client/option/KeyBinding	boundKey	Lnet/minecraft/client/util/InputUtil$Key;
+accessible	method	net/minecraft/entity/Entity	getSavedEntityId	()Ljava/lang/String;
+accessible	method	net/minecraft/world/World	getEntityLookup	()Lnet/minecraft/world/entity/EntityLookup;
+accessible	method	net/minecraft/server/world/ServerWorld	getEntityLookup	()Lnet/minecraft/world/entity/EntityLookup;
+accessible	class	net/minecraft/client/render/RenderPhase$Transparency
+accessible	class	net/minecraft/client/render/RenderPhase$ShaderProgram
+accessible	class	net/minecraft/client/render/RenderLayer$MultiPhaseParameters
+accessible	class	net/minecraft/client/render/RenderPhase$Cull
+accessible	class	net/minecraft/client/render/RenderPhase$Lightmap
+accessible	class	net/minecraft/client/render/RenderPhase$DepthTest
+accessible	method	net/minecraft/util/WorldSavePath	<init>	(Ljava/lang/String;)V
+accessible	field	net/minecraft/server/world/ThreadedAnvilChunkStorage	entityTrackers	Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
+accessible	class	net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker
+accessible	field	net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker	listeners	Ljava/util/Set;

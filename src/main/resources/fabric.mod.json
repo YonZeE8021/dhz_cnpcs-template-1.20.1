@@ -2,33 +2,34 @@
 	"schemaVersion": 1,
 	"id": "dhz_cnpcs",
 	"version": "${version}",
-	"name": "DHZ_CNPCs",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "DHZ Custom NPCs",
+	"description": "Custom NPCs（CustomNPCs Fabric 1.20.1）移植与构建版本。",
 	"authors": [
-		"Me!"
+		"Noppes",
+		"Goodbird",
+		"DaHuZhou"
 	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/dhz_cnpcs/icon.png",
+	"license": "CC BY-NC",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.dahuzhou.dhz_cnpcs.DHZ_CNPCs"
+			"noppes.npcs.CustomNpcs"
+		],
+		"client": [
+			"noppes.npcs.CustomNpcsClient"
 		],
 		"fabric-datagen": [
 			"com.dahuzhou.dhz_cnpcs.DHZ_CNPCsDataGenerator"
 		]
 	},
 	"mixins": [
-		"dhz_cnpcs.mixins.json"
+		"customnpcs.mixins.json"
 	],
+	"accessWidener": "customnpcs.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.19.2",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
-		"fabric-api": "*"
+		"fabric-api": ">=0.92"
 	}
 }

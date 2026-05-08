@@ -1,0 +1,134 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  net.minecraft.nbt.NbtCompound
+ *  net.minecraft.nbt.NbtList
+ *  net.minecraft.nbt.NbtElement
+ */
+package noppes.npcs.entity.data;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtElement;
+import noppes.npcs.EventHooks;
+import noppes.npcs.api.CustomNPCsException;
+import noppes.npcs.api.ITimers;
+import noppes.npcs.controllers.IScriptBlockHandler;
+import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.entity.EntityNPCInterface;
+
+public class DataTimers
+implements ITimers {
+    private Object parent;
+    private Map<Integer, Timer> timers = new HashMap<Integer, Timer>();
+
+    public DataTimers(Object parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public void start(int id, int ticks, boolean repeat) {
+        if (this.timers.containsKey(id)) {
+            throw new CustomNPCsException("There is already a timer with id: " + id, new Object[0]);
+        }
+        this.timers.put(id, new Timer(id, ticks, repeat));
+    }
+
+    @Override
+    public void forceStart(int id, int ticks, boolean repeat) {
+        this.timers.put(id, new Timer(id, ticks, repeat));
+    }
+
+    @Override
+    public boolean has(int id) {
+        return this.timers.containsKey(id);
+    }
+
+    @Override
+    public boolean stop(int id) {
+        return this.timers.remove(id) != null;
+    }
+
+    @Override
+    public void reset(int id) {
+        Timer timer = this.timers.get(id);
+        if (timer == null) {
+            throw new CustomNPCsException("There is no timer with id: " + id, new Object[0]);
+        }
+        timer.ticks = 0;
+    }
+
+    public void save(NbtCompound compound) {
+        NbtList list = new NbtList();
+        for (Timer timer : this.timers.values()) {
+            NbtCompound c = new NbtCompound();
+            c.putInt("ID", timer.id);
+            c.putInt("TimerTicks", timer.id);
+            c.putBoolean("Repeat", timer.repeat);
+            c.putInt("Ticks", timer.ticks);
+            list.add(c);
+        }
+        compound.put("NpcsTimers", (NbtElement)list);
+    }
+
+    public void load(NbtCompound compound) {
+        HashMap<Integer, Timer> timers = new HashMap<Integer, Timer>();
+        NbtList list = compound.getList("NpcsTimers", 10);
+        for (int i = 0; i < list.size(); ++i) {
+            NbtCompound c = list.getCompound(i);
+            Timer t = new Timer(c.getInt("ID"), c.getInt("TimerTicks"), c.getBoolean("Repeat"));
+            t.ticks = c.getInt("Ticks");
+            timers.put(t.id, t);
+        }
+        this.timers = timers;
+    }
+
+    public void update() {
+        for (Timer timer : new ArrayList<Timer>(this.timers.values())) {
+            timer.update();
+        }
+    }
+
+    @Override
+    public void clear() {
+        this.timers = new HashMap<Integer, Timer>();
+    }
+
+    class Timer {
+        public int id;
+        private boolean repeat;
+        private int timerTicks;
+        private int ticks = 0;
+
+        public Timer(int id, int ticks, boolean repeat) {
+            this.id = id;
+            this.repeat = repeat;
+            this.timerTicks = ticks;
+            this.ticks = ticks;
+        }
+
+        public void update() {
+            if (this.ticks-- > 0) {
+                return;
+            }
+            if (this.repeat) {
+                this.ticks = this.timerTicks;
+            } else {
+                DataTimers.this.stop(this.id);
+            }
+            Object ob = DataTimers.this.parent;
+            if (ob instanceof EntityNPCInterface) {
+                EventHooks.onNPCTimer((EntityNPCInterface)(ob), this.id);
+            } else if (ob instanceof PlayerData) {
+                EventHooks.onPlayerTimer((PlayerData)ob, this.id);
+            } else {
+                EventHooks.onScriptBlockTimer((IScriptBlockHandler)ob, this.id);
+            }
+        }
+    }
+}
+

@@ -32,6 +32,9 @@ bin/
 
 run/
 
+# mixin audit tool cache
+tools/.yarn-cache/
+
 # java
 
 hs_err_*.log

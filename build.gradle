@@ -20,6 +20,10 @@ fabricApi {
 	}
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/customnpcs.accesswidener")
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -28,7 +32,9 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-	
+
+	// Scripting (JDK 17+ 不再内置 Nashorn)
+	implementation(include("org.openjdk.nashorn:nashorn-core:15.4"))
 }
 
 processResources {
