@@ -17,9 +17,6 @@
  */
 package noppes.npcs;
 
-import com.mojang.datafixers.DSL;
-import net.minecraft.datafixer.TypeReferences;
-import net.minecraft.util.Util;
 import net.minecraft.item.Item;
 import net.minecraft.block.Block;
 import net.minecraft.registry.Registry;
@@ -70,15 +67,15 @@ public class CustomBlocks {
     public static Item copy_item = CustomBlocks.createItem(copy);
     public static Block carpenty = new BlockCarpentryBench();
     public static Item carpentry_item = CustomBlocks.createItem(carpenty);
-    public static BlockEntityType<TileBlockAnvil> tile_anvil = CustomBlocks.createTile("tileblockanvil", TileBlockAnvil::new, carpenty);
-    public static BlockEntityType<TileBorder> tile_border = CustomBlocks.createTile("tilenpcborder", TileBorder::new, border);
-    public static BlockEntityType<TileBuilder> tile_builder = CustomBlocks.createTile("tilenpcbuilder", TileBuilder::new, builder);
-    public static BlockEntityType<TileCopy> tile_copy = CustomBlocks.createTile("tilenpccopy", TileCopy::new, copy);
-    public static BlockEntityType<TileMailbox> tile_mailbox = CustomBlocks.createTile("tilemailbox", TileMailbox::new, mailbox, mailbox2, mailbox3);
-    public static BlockEntityType<TileRedstoneBlock> tile_redstoneblock = CustomBlocks.createTile("tileredstoneblock", TileRedstoneBlock::new, redstone);
-    public static BlockEntityType<TileScripted> tile_scripted = CustomBlocks.createTile("tilenpcscripted", TileScripted::new, scripted);
-    public static BlockEntityType<TileScriptedDoor> tile_scripteddoor = CustomBlocks.createTile("tilenpcscripteddoor", TileScriptedDoor::new, scripted_door);
-    public static BlockEntityType<TileWaypoint> tile_waypoint = CustomBlocks.createTile("tilewaypoint", TileWaypoint::new, waypoint);
+    public static BlockEntityType<TileBlockAnvil> tile_anvil = CustomBlocks.createTile(TileBlockAnvil::new, carpenty);
+    public static BlockEntityType<TileBorder> tile_border = CustomBlocks.createTile(TileBorder::new, border);
+    public static BlockEntityType<TileBuilder> tile_builder = CustomBlocks.createTile(TileBuilder::new, builder);
+    public static BlockEntityType<TileCopy> tile_copy = CustomBlocks.createTile(TileCopy::new, copy);
+    public static BlockEntityType<TileMailbox> tile_mailbox = CustomBlocks.createTile(TileMailbox::new, mailbox, mailbox2, mailbox3);
+    public static BlockEntityType<TileRedstoneBlock> tile_redstoneblock = CustomBlocks.createTile(TileRedstoneBlock::new, redstone);
+    public static BlockEntityType<TileScripted> tile_scripted = CustomBlocks.createTile(TileScripted::new, scripted);
+    public static BlockEntityType<TileScriptedDoor> tile_scripteddoor = CustomBlocks.createTile(TileScriptedDoor::new, scripted_door);
+    public static BlockEntityType<TileWaypoint> tile_waypoint = CustomBlocks.createTile(TileWaypoint::new, waypoint);
 
     public static void registerBlocks() {
         Registry.register((Registry)Registries.BLOCK, (String)"customnpcs:npcredstoneblock", redstone);
@@ -114,9 +111,9 @@ public class CustomBlocks {
         Registry.register((Registry)Registries.BLOCK_ENTITY_TYPE, (String)"customnpcs:tilewaypoint", tile_waypoint);
     }
 
-    private static <T extends BlockEntity> BlockEntityType<T> createTile(String key, BlockEntityType.BlockEntityFactory<T> factoryIn, Block ... blocks) {
-        BlockEntityType.Builder builder = BlockEntityType.Builder.create(factoryIn, (Block[])blocks);
-        return builder.build(Util.getChoiceType((DSL.TypeReference)TypeReferences.BLOCK_ENTITY, (String)key));
+    /** {@code build(null)}：不向 DFU 注册 choice，避免启动时刷 “No data fixer registered”。 */
+    private static <T extends BlockEntity> BlockEntityType<T> createTile(BlockEntityType.BlockEntityFactory<T> factoryIn, Block ... blocks) {
+        return BlockEntityType.Builder.create(factoryIn, (Block[])blocks).build(null);
     }
 
     public static Item createItem(Block block) {

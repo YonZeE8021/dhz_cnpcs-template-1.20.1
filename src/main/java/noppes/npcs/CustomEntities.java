@@ -19,7 +19,9 @@ package noppes.npcs;
 import java.util.ArrayList;
 import java.util.List;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
@@ -78,30 +80,27 @@ public class CustomEntities {
         }
     }
 
+    private static <T extends Entity> EntityType<T> buildNpcEntityType(EntityType.EntityFactory<T> factoryIn) {
+        return FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, factoryIn).trackedUpdateRate(3).trackRangeChunks(10).dimensions(EntityDimensions.changing(1.0f, 1.0f)).build();
+    }
+
     private static <T extends Entity> EntityType<T> registerNpc(Class<? extends Entity> c, String name, EntityType.EntityFactory<T> factoryIn) {
-        EntityType.Builder builder = EntityType.Builder.create(factoryIn, (SpawnGroup)SpawnGroup.CREATURE);
-        builder.trackingTickInterval(3);
-        builder.maxTrackingRange(10);
-        builder.setDimensions(1.0f, 1.0f);
         Identifier registryName = new Identifier("customnpcs", name);
-        EntityType type = builder.build(registryName.toString());
+        EntityType<T> type = CustomEntities.buildNpcEntityType(factoryIn);
         types.add(type);
-        Registry.register((Registry)Registries.ENTITY_TYPE, (Identifier)registryName, type);
+        Registry.register((Registry)Registries.ENTITY_TYPE, registryName, type);
         if (CustomNpcs.FixUpdateFromPre_1_12) {
-            registryName = new Identifier("customnpcs." + name);
-            Registry.register((Registry)Registries.ENTITY_TYPE, (Identifier)registryName, builder.build(registryName.toString()));
+            Identifier legacyId = new Identifier("customnpcs." + name);
+            Registry.register((Registry)Registries.ENTITY_TYPE, legacyId, CustomEntities.buildNpcEntityType(factoryIn));
         }
         return type;
     }
 
+    @SuppressWarnings("unused")
     private static <T extends Entity> EntityType<T> registerNewentity(Class<? extends Entity> c, String name, EntityType.EntityFactory<T> factoryIn, int range, int update, boolean velocity, float width, float height) {
-        EntityType.Builder builder = EntityType.Builder.create(factoryIn, (SpawnGroup)SpawnGroup.MISC);
-        builder.trackingTickInterval(update);
-        builder.setDimensions(width, height);
-        builder.maxTrackingRange(4);
+        EntityType<T> type = FabricEntityTypeBuilder.create(SpawnGroup.MISC, factoryIn).trackedUpdateRate(update).trackRangeChunks(4).dimensions(EntityDimensions.changing(width, height)).build();
         Identifier registryName = new Identifier("customnpcs", name);
-        EntityType type = builder.build(registryName.toString());
-        Registry.register((Registry)Registries.ENTITY_TYPE, (Identifier)registryName, type);
+        Registry.register((Registry)Registries.ENTITY_TYPE, registryName, type);
         return type;
     }
 
