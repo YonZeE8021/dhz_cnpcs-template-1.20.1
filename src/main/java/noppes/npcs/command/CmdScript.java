@@ -35,7 +35,7 @@ import noppes.npcs.controllers.ScriptController;
 
 public class CmdScript {
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
-        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"script").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandOpOnly ? 4 : 2))).then(CommandManager.literal((String)"reload").executes(context -> {
+        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"script").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandOpOnly ? CustomNpcs.NoppesAdminPermissionLevel : CustomNpcs.NoppesCommandPermissionLevel))).then(CommandManager.literal((String)"reload").executes(context -> {
             ScriptController.Instance.loadCategories();
             if (ScriptController.Instance.loadPlayerScripts()) {
                 ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)"Reload player scripts succesfully"), false);

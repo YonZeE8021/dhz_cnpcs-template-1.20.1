@@ -26,11 +26,12 @@ import net.minecraft.command.CommandException;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.entity.data.DataScenes;
 
 public class CmdScene {
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
-        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"scene").requires(source -> source.hasPermissionLevel(2))).then(((LiteralArgumentBuilder)CommandManager.literal((String)"time").executes(context -> {
+        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"scene").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).then(((LiteralArgumentBuilder)CommandManager.literal((String)"time").executes(context -> {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)"Active scenes:"), false);
             for (Map.Entry<String, DataScenes.SceneState> entry : DataScenes.StartedScenes.entrySet()) {
                 ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.translatable((String)"Scene %s time is %s", (Object[])new Object[]{entry.getKey(), ((DataScenes.SceneState)entry.getValue()).ticks}), false);

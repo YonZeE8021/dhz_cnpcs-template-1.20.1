@@ -146,6 +146,12 @@ ServerLifecycleEvents.ServerStarted {
     public static boolean NpcUseOpCommands = false;
     @ConfigProp(info="If set to true only opped people can use the /noppes command")
     public static boolean NoppesCommandOpOnly = false;
+    @ConfigProp(info="Minimum Minecraft permission level (0-4) required for NPC management (GUI, wand, clone add/remove, etc.)")
+    public static int NpcManagePermissionLevel = 3;
+    @ConfigProp(info="Minimum Minecraft permission level (0-4) for general /noppes subcommands (root, faction, quest player ops, clone list/spawn, dialog read/show, config font, etc.)")
+    public static int NoppesCommandPermissionLevel = 2;
+    @ConfigProp(info="Minimum Minecraft permission level (0-4) for administrative /noppes actions (config toggles, slay, dialog/quest reload, schematics, and when NoppesCommandOpOnly applies to npc/script)")
+    public static int NoppesAdminPermissionLevel = 4;
     @ConfigProp
     public static boolean InventoryGuiEnabled = true;
     public static boolean FixUpdateFromPre_1_12 = false;
@@ -187,6 +193,10 @@ ServerLifecycleEvents.ServerStarted {
     public static boolean VerboseDebug;
     public static MinecraftServer Server;
     public static CommonProxy proxy;
+
+    public static int clampMcPermissionLevel(int value) {
+        return Math.max(0, Math.min(4, value));
+    }
 
     public static File getLevelSaveDirectory() {
         return CustomNpcs.getLevelSaveDirectory(null);
@@ -234,6 +244,9 @@ ServerLifecycleEvents.ServerStarted {
         if (NpcNavRange < 16) {
             NpcNavRange = 16;
         }
+        NpcManagePermissionLevel = CustomNpcs.clampMcPermissionLevel(NpcManagePermissionLevel);
+        NoppesCommandPermissionLevel = CustomNpcs.clampMcPermissionLevel(NoppesCommandPermissionLevel);
+        NoppesAdminPermissionLevel = CustomNpcs.clampMcPermissionLevel(NoppesAdminPermissionLevel);
         CustomBlocks.registerBlocks();
         CustomItems.registerItems();
         CustomTabs.registerCreativeTab();

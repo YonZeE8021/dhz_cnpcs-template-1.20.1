@@ -30,6 +30,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.text.Text;
 import net.minecraft.server.network.ServerPlayerEntity;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.api.handler.data.IQuestObjective;
 import noppes.npcs.controllers.QuestController;
 import noppes.npcs.controllers.SyncController;
@@ -43,7 +44,7 @@ import noppes.npcs.packets.client.PacketChat;
 public class CmdQuest {
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
         LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal((String)"quest");
-        command.then(CommandManager.literal((String)"start").requires((ServerCommandSource source) -> source.hasPermissionLevel(2)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(CommandManager.literal((String)"start").requires((ServerCommandSource source) -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers((CommandContext)context, (String)"players");
             if (players.isEmpty()) {
                 return 1;
@@ -62,7 +63,7 @@ public class CmdQuest {
             }
             return 1;
         }))));
-        command.then(CommandManager.literal((String)"finish").requires((ServerCommandSource source) -> source.hasPermissionLevel(2)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(CommandManager.literal((String)"finish").requires((ServerCommandSource source) -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers((CommandContext)context, (String)"players");
             if (players.isEmpty()) {
                 return 1;
@@ -78,7 +79,7 @@ public class CmdQuest {
             }
             return 1;
         }))));
-        command.then(CommandManager.literal((String)"stop").requires((ServerCommandSource source) -> source.hasPermissionLevel(2)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(CommandManager.literal((String)"stop").requires((ServerCommandSource source) -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers((CommandContext)context, (String)"players");
             if (players.isEmpty()) {
                 return 1;
@@ -94,7 +95,7 @@ public class CmdQuest {
             }
             return 1;
         }))));
-        command.then(CommandManager.literal((String)"remove").requires((ServerCommandSource source) -> source.hasPermissionLevel(2)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(CommandManager.literal((String)"remove").requires((ServerCommandSource source) -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers((CommandContext)context, (String)"players");
             if (players.isEmpty()) {
                 return 1;
@@ -111,7 +112,7 @@ public class CmdQuest {
             }
             return 1;
         }))));
-        command.then(CommandManager.literal((String)"objective").requires((ServerCommandSource source) -> source.hasPermissionLevel(2)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(((RequiredArgumentBuilder)CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(CommandManager.literal((String)"objective").requires((ServerCommandSource source) -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel)).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(((RequiredArgumentBuilder)CommandManager.argument((String)"quest", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers((CommandContext)context, (String)"players");
             if (players.isEmpty()) {
                 return 1;
@@ -165,7 +166,7 @@ public class CmdQuest {
             }
             return 1;
         }))))));
-        command.then(CommandManager.literal((String)"reload").requires((ServerCommandSource source) -> source.hasPermissionLevel(4)).executes(context -> {
+        command.then(CommandManager.literal((String)"reload").requires((ServerCommandSource source) -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel)).executes(context -> {
             new QuestController().load();
             SyncController.syncAllQuests();
             return 1;

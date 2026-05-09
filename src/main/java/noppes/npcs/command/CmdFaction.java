@@ -30,6 +30,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.text.Text;
 import net.minecraft.server.network.ServerPlayerEntity;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.controllers.FactionController;
 import noppes.npcs.controllers.data.Faction;
 import noppes.npcs.controllers.data.PlayerData;
@@ -37,7 +38,7 @@ import noppes.npcs.controllers.data.PlayerFactionData;
 
 public class CmdFaction {
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
-        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"faction").requires(source -> source.hasPermissionLevel(2))).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(((RequiredArgumentBuilder)((RequiredArgumentBuilder)((RequiredArgumentBuilder)CommandManager.argument((String)"faction", (ArgumentType)IntegerArgumentType.integer((int)0)).then(CommandManager.literal((String)"add").then(CommandManager.argument((String)"points", (ArgumentType)IntegerArgumentType.integer()).executes(context -> {
+        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"faction").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(((RequiredArgumentBuilder)((RequiredArgumentBuilder)((RequiredArgumentBuilder)CommandManager.argument((String)"faction", (ArgumentType)IntegerArgumentType.integer((int)0)).then(CommandManager.literal((String)"add").then(CommandManager.argument((String)"points", (ArgumentType)IntegerArgumentType.integer()).executes(context -> {
             Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers((CommandContext)context, (String)"players");
             if (players.isEmpty()) {
                 return 1;

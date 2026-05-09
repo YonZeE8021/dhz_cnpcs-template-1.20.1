@@ -21,6 +21,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.TypeFilter;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.CustomEntities;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.command.CmdClone;
@@ -38,7 +39,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 public class CmdNoppes {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"noppes").requires(p_198816_0_ -> p_198816_0_.hasPermissionLevel(2))).then(CmdClone.register())).then(CmdConfig.register())).then(CmdDialog.register())).then(CmdFaction.register())).then(CmdMark.register())).then(CmdNPC.register())).then(CmdQuest.register())).then(CmdScene.register())).then(CmdSchematics.register())).then(CmdScript.register())).then(CmdSlay.register()));
+        dispatcher.register((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"noppes").requires(p_198816_0_ -> p_198816_0_.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).then(CmdClone.register())).then(CmdConfig.register())).then(CmdDialog.register())).then(CmdFaction.register())).then(CmdMark.register())).then(CmdNPC.register())).then(CmdQuest.register())).then(CmdScene.register())).then(CmdSchematics.register())).then(CmdScript.register())).then(CmdSlay.register()));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

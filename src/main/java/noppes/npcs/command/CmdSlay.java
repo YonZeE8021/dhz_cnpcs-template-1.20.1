@@ -58,6 +58,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.util.math.Box;
 import net.minecraft.text.Text;
 import net.minecraft.registry.Registries;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public class CmdSlay {
@@ -91,7 +92,7 @@ public class CmdSlay {
     }
 
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
-        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"slay").requires(source -> source.hasPermissionLevel(4))).then(CommandManager.argument((String)"type", (ArgumentType)StringArgumentType.word()).then(CommandManager.argument((String)"range", (ArgumentType)IntegerArgumentType.integer((int)1)).executes(context -> {
+        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"slay").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).then(CommandManager.argument((String)"type", (ArgumentType)StringArgumentType.word()).then(CommandManager.argument((String)"range", (ArgumentType)IntegerArgumentType.integer((int)1)).executes(context -> {
             ArrayList toDelete = new ArrayList();
             boolean deleteNPCs = false;
             String delete = StringArgumentType.getString((CommandContext)context, (String)"type");

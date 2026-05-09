@@ -43,7 +43,7 @@ public class CustomNpcsPermissions {
     public static final PermissionNodeCompat<Boolean> SCENES = new PermissionNodeCompat<Boolean>("customnpcs", "scenes", PermissionTypes.BOOLEAN, (player, id, context) -> true);
 
     public static boolean hasPermission(ServerPlayerEntity player, PermissionNodeCompat<Boolean> permission) {
-        return player.hasPermissionLevel(4);
+        return player.hasPermissionLevel(CustomNpcs.NpcManagePermissionLevel);
     }
 }
 

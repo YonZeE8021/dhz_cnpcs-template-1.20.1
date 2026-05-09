@@ -37,6 +37,7 @@ import net.minecraft.command.suggestion.SuggestionProviders;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.controllers.SchematicController;
 import noppes.npcs.schematics.SchematicWrapper;
 
@@ -46,7 +47,7 @@ public class CmdSchematics {
     public static final SuggestionProvider<ServerCommandSource> ROTATION = SuggestionProviders.register((Identifier)new Identifier("rotation"), (context, builder) -> CommandSource.suggestMatching((String[])new String[]{"0", "90", "180", "270"}, (SuggestionsBuilder)builder));
 
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
-        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"schema").requires(source -> source.hasPermissionLevel(4))).then(CommandManager.literal((String)"build").then(CommandManager.argument((String)"name", (ArgumentType)StringArgumentType.word()).suggests(SCHEMAS).then(CommandManager.argument((String)"pos", (ArgumentType)BlockPosArgumentType.blockPos()).then(CommandManager.argument((String)"rotation", (ArgumentType)StringArgumentType.word()).suggests(ROTATION).executes(context -> {
+        LiteralArgumentBuilder command = (LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"schema").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).then(CommandManager.literal((String)"build").then(CommandManager.argument((String)"name", (ArgumentType)StringArgumentType.word()).suggests(SCHEMAS).then(CommandManager.argument((String)"pos", (ArgumentType)BlockPosArgumentType.blockPos()).then(CommandManager.argument((String)"rotation", (ArgumentType)StringArgumentType.word()).suggests(ROTATION).executes(context -> {
             String name = StringArgumentType.getString((CommandContext)context, (String)"name");
             BlockPos pos = BlockPosArgumentType.getLoadedBlockPos((CommandContext)context, (String)"pos");
             int rotation = Integer.parseInt(StringArgumentType.getString((CommandContext)context, (String)"rotation"));

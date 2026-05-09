@@ -40,6 +40,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.server.world.ServerWorld;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.command.CmdNoppes;
 import noppes.npcs.controllers.ServerCloneController;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -47,7 +48,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 public class CmdClone {
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
         LiteralArgumentBuilder command = CommandManager.literal((String)"clone");
-        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"list").requires(source -> source.hasPermissionLevel(2))).then(CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"list").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).then(CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             int tab = IntegerArgumentType.getInteger((CommandContext)context, (String)"tab");
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)"--- Stored NPCs --- (server side)"), false);
             for (String name : ServerCloneController.Instance.getClones(tab)) {
@@ -56,14 +57,14 @@ public class CmdClone {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)"------------------------------------"), false);
             return 1;
         })));
-        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"add").requires(source -> source.hasPermissionLevel(4))).then(CommandManager.argument((String)"npc", (ArgumentType)StringArgumentType.string()).then(((RequiredArgumentBuilder)CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"add").requires(source -> source.hasPermissionLevel(CustomNpcs.NpcManagePermissionLevel))).then(CommandManager.argument((String)"npc", (ArgumentType)StringArgumentType.string()).then(((RequiredArgumentBuilder)CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             CmdClone.addClone((CommandContext<ServerCommandSource>)context, "");
             return 1;
         })).then(CommandManager.argument((String)"name", (ArgumentType)StringArgumentType.string()).executes(context -> {
             CmdClone.addClone((CommandContext<ServerCommandSource>)context, StringArgumentType.getString((CommandContext)context, (String)"name"));
             return 1;
         })))));
-        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"remove").requires(source -> source.hasPermissionLevel(4))).then(CommandManager.argument((String)"npc", (ArgumentType)StringArgumentType.string()).then(CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"remove").requires(source -> source.hasPermissionLevel(CustomNpcs.NpcManagePermissionLevel))).then(CommandManager.argument((String)"npc", (ArgumentType)StringArgumentType.string()).then(CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             String nametodel = StringArgumentType.getString((CommandContext)context, (String)"npc");
             int tab = IntegerArgumentType.getInteger((CommandContext)context, (String)"tab");
             boolean deleted = false;
@@ -78,7 +79,7 @@ public class CmdClone {
             }
             return 1;
         }))));
-        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"spawn").requires(source -> source.hasPermissionLevel(2))).then(CommandManager.argument((String)"npc", (ArgumentType)StringArgumentType.string()).then(((RequiredArgumentBuilder)CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"spawn").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).then(CommandManager.argument((String)"npc", (ArgumentType)StringArgumentType.string()).then(((RequiredArgumentBuilder)CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             CmdClone.spawnClone((CommandContext<ServerCommandSource>)context, new BlockPos((int)((ServerCommandSource)context.getSource()).getPosition().x, (int)((ServerCommandSource)context.getSource()).getPosition().y, (int)((ServerCommandSource)context.getSource()).getPosition().z), "");
             return 1;
         })).then(((RequiredArgumentBuilder)CommandManager.argument((String)"pos", (ArgumentType)BlockPosArgumentType.blockPos()).executes(context -> {
@@ -88,7 +89,7 @@ public class CmdClone {
             CmdClone.spawnClone((CommandContext<ServerCommandSource>)context, BlockPosArgumentType.getLoadedBlockPos((CommandContext)context, (String)"pos"), StringArgumentType.getString((CommandContext)context, (String)"display_name"));
             return 1;
         }))))));
-        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"grid").requires(source -> source.hasPermissionLevel(2))).then(CommandManager.argument((String)"npc", (ArgumentType)StringArgumentType.string()).then(CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).then(CommandManager.argument((String)"length", (ArgumentType)IntegerArgumentType.integer()).then(((RequiredArgumentBuilder)CommandManager.argument((String)"width", (ArgumentType)IntegerArgumentType.integer()).executes(context -> {
+        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"grid").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).then(CommandManager.argument((String)"npc", (ArgumentType)StringArgumentType.string()).then(CommandManager.argument((String)"tab", (ArgumentType)IntegerArgumentType.integer((int)0)).then(CommandManager.argument((String)"length", (ArgumentType)IntegerArgumentType.integer()).then(((RequiredArgumentBuilder)CommandManager.argument((String)"width", (ArgumentType)IntegerArgumentType.integer()).executes(context -> {
             int length = IntegerArgumentType.getInteger((CommandContext)context, (String)"length");
             int width = IntegerArgumentType.getInteger((CommandContext)context, (String)"width");
             for (int x = 0; x < length; ++x) {

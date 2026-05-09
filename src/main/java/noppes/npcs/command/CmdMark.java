@@ -30,11 +30,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.command.argument.EntityArgumentType;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.controllers.data.MarkData;
 
 public class CmdMark {
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
-        LiteralArgumentBuilder command = (LiteralArgumentBuilder)CommandManager.literal((String)"mark").requires(source -> source.hasPermissionLevel(2));
+        LiteralArgumentBuilder command = (LiteralArgumentBuilder)CommandManager.literal((String)"mark").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel));
         command.then(CommandManager.argument((String)"clear", (ArgumentType)EntityArgumentType.entities()).executes(context -> {
             Collection<? extends Entity> entities = EntityArgumentType.getEntities((CommandContext)context, (String)"clear");
             for (Entity entity : entities) {

@@ -34,6 +34,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.text.Text;
 import net.minecraft.server.network.ServerPlayerEntity;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.client.EntityUtil;
 import noppes.npcs.controllers.DialogController;
@@ -46,12 +47,12 @@ import noppes.npcs.entity.EntityDialogNpc;
 public class CmdDialog {
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
         LiteralArgumentBuilder command = CommandManager.literal((String)"dialog");
-        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"reload").requires(source -> source.hasPermissionLevel(4))).executes(context -> {
+        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"reload").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).executes(context -> {
             new DialogController().load();
             SyncController.syncAllDialogs();
             return 1;
         }));
-        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"read").requires(source -> source.hasPermissionLevel(2))).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"dialog", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"read").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"dialog", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers((CommandContext)context, (String)"players");
             if (players.isEmpty()) {
                 return 1;
@@ -68,7 +69,7 @@ public class CmdDialog {
             }
             return 1;
         }))));
-        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"unread").requires(source -> source.hasPermissionLevel(2))).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"dialog", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
+        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"unread").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"dialog", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
             Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers((CommandContext)context, (String)"players");
             if (players.isEmpty()) {
                 return 1;
@@ -85,7 +86,7 @@ public class CmdDialog {
             }
             return 1;
         }))));
-        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"show").requires(source -> source.hasPermissionLevel(2))).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"dialog", (ArgumentType)IntegerArgumentType.integer((int)0)).then(CommandManager.argument((String)"name", (ArgumentType)StringArgumentType.string()).executes(context -> {
+        command.then(((LiteralArgumentBuilder)CommandManager.literal((String)"show").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).then(CommandManager.argument((String)"players", (ArgumentType)EntityArgumentType.players()).then(CommandManager.argument((String)"dialog", (ArgumentType)IntegerArgumentType.integer((int)0)).then(CommandManager.argument((String)"name", (ArgumentType)StringArgumentType.string()).executes(context -> {
             Collection<ServerPlayerEntity> players = EntityArgumentType.getPlayers((CommandContext)context, (String)"players");
             if (players.isEmpty()) {
                 return 1;

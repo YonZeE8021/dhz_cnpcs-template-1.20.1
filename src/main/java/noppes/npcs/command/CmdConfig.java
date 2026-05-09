@@ -33,7 +33,7 @@ import noppes.npcs.packets.client.PacketConfigFont;
 public class CmdConfig {
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
         LiteralArgumentBuilder command = CommandManager.literal((String)"config");
-        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"leavesdecay").requires(source -> source.hasPermissionLevel(4))).executes(context -> {
+        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"leavesdecay").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).executes(context -> {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("LeavesDecay: " + CustomNpcs.LeavesDecayEnabled)), false);
             return 1;
         })).then(CommandManager.argument((String)"boolean", (ArgumentType)BoolArgumentType.bool()).executes(context -> {
@@ -42,7 +42,7 @@ public class CmdConfig {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("LeavesDecay: " + CustomNpcs.LeavesDecayEnabled)), false);
             return 1;
         })));
-        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"vineinflateth").requires(source -> source.hasPermissionLevel(4))).executes(context -> {
+        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"vineinflateth").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).executes(context -> {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("VineGrowth: " + CustomNpcs.VineGrowthEnabled)), false);
             return 1;
         })).then(CommandManager.argument((String)"boolean", (ArgumentType)BoolArgumentType.bool()).executes(context -> {
@@ -51,7 +51,7 @@ public class CmdConfig {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("VineGrowth: " + CustomNpcs.VineGrowthEnabled)), false);
             return 1;
         })));
-        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"icemelts").requires(source -> source.hasPermissionLevel(4))).executes(context -> {
+        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"icemelts").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).executes(context -> {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("IceMelts: " + CustomNpcs.IceMeltsEnabled)), false);
             return 1;
         })).then(CommandManager.argument((String)"boolean", (ArgumentType)BoolArgumentType.bool()).executes(context -> {
@@ -60,7 +60,7 @@ public class CmdConfig {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("IceMelts: " + CustomNpcs.IceMeltsEnabled)), false);
             return 1;
         })));
-        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"freezenpcs").requires(source -> source.hasPermissionLevel(4))).executes(context -> {
+        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"freezenpcs").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).executes(context -> {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("Frozen NPCs: " + CustomNpcs.FreezeNPCs)), false);
             return 1;
         })).then(CommandManager.argument((String)"boolean", (ArgumentType)BoolArgumentType.bool()).executes(context -> {
@@ -68,7 +68,7 @@ public class CmdConfig {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("Frozen NPCs: " + CustomNpcs.FreezeNPCs)), false);
             return 1;
         })));
-        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"debug").requires(source -> source.hasPermissionLevel(4))).executes(context -> {
+        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"debug").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).executes(context -> {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("Verbose debug is " + CustomNpcs.VerboseDebug)), false);
             return 1;
         })).then(CommandManager.argument((String)"boolean", (ArgumentType)BoolArgumentType.bool()).executes(context -> {
@@ -76,7 +76,7 @@ public class CmdConfig {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("Verbose debug is now" + CustomNpcs.VerboseDebug)), false);
             return 1;
         })));
-        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"scripting").requires(source -> source.hasPermissionLevel(4))).executes(context -> {
+        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"scripting").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).executes(context -> {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("Scripting is " + CustomNpcs.EnableScripting)), false);
             return 1;
         })).then(CommandManager.argument((String)"boolean", (ArgumentType)BoolArgumentType.bool()).executes(context -> {
@@ -85,7 +85,7 @@ public class CmdConfig {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("Scripting is now" + CustomNpcs.EnableScripting)), false);
             return 1;
         })));
-        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"chunkloaders").requires(source -> source.hasPermissionLevel(4))).executes(context -> {
+        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"chunkloaders").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesAdminPermissionLevel))).executes(context -> {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("ChunkLoaders: " + ChunkController.instance.size() + "/" + CustomNpcs.ChuckLoaders)), false);
             return 1;
         })).then(CommandManager.argument((String)"number", (ArgumentType)IntegerArgumentType.integer((int)0)).executes(context -> {
@@ -94,7 +94,7 @@ public class CmdConfig {
             ((ServerCommandSource)context.getSource()).sendFeedback(() -> Text.literal((String)("Max ChunkLoaders: " + CustomNpcs.ChuckLoaders)), false);
             return 1;
         })));
-        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"font").requires(source -> source.hasPermissionLevel(2))).executes(context -> {
+        command.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)CommandManager.literal((String)"font").requires(source -> source.hasPermissionLevel(CustomNpcs.NoppesCommandPermissionLevel))).executes(context -> {
             Packets.send(((ServerCommandSource)context.getSource()).getPlayerOrThrow(), new PacketConfigFont("", 0));
             return 1;
         })).then(((RequiredArgumentBuilder)CommandManager.argument((String)"font", (ArgumentType)StringArgumentType.string()).executes(context -> {
