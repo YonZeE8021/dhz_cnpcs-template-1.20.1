@@ -17,7 +17,8 @@ public interface ItemEntityMixin {
     @Accessor(value="pickupDelay")
     public int pickupDelay();
 
+    /** 勿命名为 age，intermediary 下会误绑到 Entity.age（field_6012），仅启动器崩。 */
     @Accessor("itemAge")
-    public void age(int var1);
+    void setItemAge(int ticks);
 }
 

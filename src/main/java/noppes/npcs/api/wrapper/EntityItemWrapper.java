@@ -59,7 +59,7 @@ implements IEntityItem {
     @Override
     public void setAge(long age) {
         age = Math.max(Math.min(age, Integer.MAX_VALUE), Integer.MIN_VALUE);
-        ((ItemEntityMixin)this.entity).age((int)age);
+        ((ItemEntityMixin)this.entity).setItemAge((int)age);
     }
 
     @Override
