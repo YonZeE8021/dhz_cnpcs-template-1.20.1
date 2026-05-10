@@ -148,7 +148,7 @@ public class NPCSpawning {
         int i = chunkpos.getStartX() + level.random.nextInt(16);
         int j = chunkpos.getStartZ() + level.random.nextInt(16);
         int k = chunk.sampleHeightmap(Heightmap.Type.WORLD_SURFACE, i, j) + 1;
-        int l = level.random.nextInt(k + 1);
+        int l = level.random.nextInt(Math.max(k + 1, 1));
         return new BlockPos(i, l, j);
     }
 
