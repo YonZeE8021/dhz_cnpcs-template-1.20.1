@@ -178,8 +178,24 @@ InvalidAccessorException: No candidates were found matching field_6012:I in net/
 - `method = "...)` 描述符必须与本仓库 **当前 Yarn 版本** 一致。
 - 升级 Yarn：`gradle.properties` 中 `yarn_mappings` 变更后全量编译 + `runClient` + 启动器各跑一次。
 - **`remapJar` 日志**若出现 `Cannot remap XXX because it does not exist in any of the targets [...]`：说明 **Mixin 字符串仍指向旧 Yarn 方法名**，需打开对应类对照 Yarn javadoc 或 `mappings.tiny` 修正。
-- 修改 Mixin 后运行 `py -3 tools/mixin_accessor_audit.py`（已支持 `@Inject` / `@Redirect`）；继承自父类的方法在 Tiny 中可能报误报，以 **`gradlew clean build` 零 `Cannot remap`** 为准。
+- 修改 Mixin 后运行 `py -3 tools/mixin_accessor_audit.py`（支持名称 + **intermediary 描述符** + `@Redirect` javap 锚点）；继承自父类的方法在 Tiny 中可能报误报，以 **`gradlew clean build` 零 `Cannot remap`** 为准。
 - 验收命令（PowerShell）：`./gradlew.bat clean build 2>&1 | Select-String "Cannot remap"` 应无输出。
+
+### 4.4 两层验收：映射链 vs 代码链
+
+| 层级 | 验证什么 | 命令 / 产物 | 通过标准 |
+|------|-----------|-------------|----------|
+| **映射链** | Yarn 方法名、remap 可解析 | `py -3 tools/mixin_accessor_audit.py`、`gradlew clean build` | audit **0 error**；build **0** `Cannot remap` |
+| **代码链** | 回调描述符、重载歧义、Redirect 锚点、运行时注入 | 同上 audit（描述符默认开）+ `gradlew genSources` + `gradlew runClient` | 无 `InvalidInjectionException` / `Mixin apply failed`；见 `tools/MIXIN_CHAIN_VERIFICATION.md` 烟测矩阵 |
+
+**常见代码链陷阱**（映射通过但运行失败）：
+
+1. **方法重载歧义**：`method={"swingHand"}` 可能绑到单参版本，回调却带 `(Hand;Z;CallbackInfo)` → 须写 `method={"swingHand(Lnet/minecraft/util/Hand;Z)V"}`。
+2. **API 拆分**：如 `ModelPart.translateAndRotate` 拆成 `rotate(MatrixStack)`，不能臆造 `translate(MatrixStack)`。
+3. **Redirect 宿主变更**：如 `insertText`+`filterText` 改为 `write`+`stripInvalidChars`，须 javap 确认锚点仍在宿主方法内。
+4. **入口方法更名**：如 `openAllSelected` → `createResourcePacks`，须确认调用方仍走新入口。
+
+详细 P1 字节码核对与烟测清单：`tools/MIXIN_CHAIN_VERIFICATION.md`。
 
 ---
 
@@ -352,10 +368,12 @@ InvalidAccessorException: No candidates were found matching field_6012:I in net/
 
 ### 10.2 `tools/mixin_accessor_audit.py`
 
-- **作用**：下载/缓存 Yarn `mappings.tiny`，校验 **`@Mixin` 目标类上是否直接声明了 `@Accessor`/`@Invoker` 所用的 Yarn 名**。
-- **局限**（脚本头部已说明）：
-  - 继承自父类的字段在 Tiny 里未必出现在子类行 → **可能误报**；
-  - **不检查** `@Inject` 方法签名、`@At` target、客户端初始化顺序等非 Accessor 问题。
+- **作用**：下载/缓存 Yarn `mappings.tiny`，校验 Accessor/Invoker **名称**，以及 `@Inject`/`@Redirect` 的 **intermediary 描述符** 与 **Redirect javap 锚点**（需本机 `javap` + Loom 缓存的 `minecraft-unpicked.jar`）。
+- **选项**：`--no-descriptors` 仅名称；`--no-redirect-check` 跳过 javap。
+- **局限**：
+  - Mixin 泛型 `T` 等无法静态解析时采用启发式；
+  - **不替代** `runClient`（重载歧义在运行时仍可能绑错，见 §4.4）。
+- **配套**：`tools/MIXIN_CHAIN_VERIFICATION.md` — P1 调用链核对与游戏烟测矩阵。
 
 ### 10.3 `tools/run_mixin_audit.bat`
 
@@ -418,7 +436,7 @@ Fabric Loader 只认 **`id` 字段**。本 jar 的 **`id` 为 `dhz_cnpcs`**，�
 2. **禁止随意修改** `Registry.register(..., "customnpcs:...", ...)` 中的 id，除非同步迁移存档与文档并明确破坏性版本号。
 3. **新增 Mixin**：同步更新 `customnpcs.mixins.json`，并选对 `mixins` vs `client`。
 4. **Accessor 命名**：遵循第 4.2 节，避免与父类 intermediary 字段混淆。
-5. **验证顺序**：`compileJava` → `py -3 tools/mixin_accessor_audit.py` → **`gradlew clean build`（零 `Cannot remap`）** → 功能相关 `runClient` → 取 `build/libs` jar 在启动器烟测。
+5. **验证顺序**（两层，见 §4.4）：`compileJava` → `py -3 tools/mixin_accessor_audit.py` → **`gradlew clean build`（零 `Cannot remap`）** → **`gradlew runClient`（无 Mixin apply 失败）** → 按 `tools/MIXIN_CHAIN_VERIFICATION.md` 烟测 → 取 `build/libs` jar 在启动器复测。
 
 ---
 

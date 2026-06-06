@@ -39,8 +39,8 @@ public abstract class EntityLivingMixin {
         }
     }
 
-    @Inject(method={"swingHand"}, at={@At(value="HEAD")}, cancellable=true)
-    public void swing(Hand hand, CallbackInfo ci) {
+    @Inject(method={"swingHand(Lnet/minecraft/util/Hand;Z)V"}, at={@At(value="HEAD")}, cancellable=true)
+    public void swing(Hand hand, boolean fromServer, CallbackInfo ci) {
         ItemStack stack = this.getStackInHand(hand);
         if (!stack.isEmpty() && stack.getItem() instanceof ItemTeleporter && ItemTeleporter.onEntitySwing(stack, (LivingEntity)(Object)this)) {
             ci.cancel();
