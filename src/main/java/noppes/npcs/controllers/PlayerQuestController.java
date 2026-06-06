@@ -93,6 +93,7 @@ public class PlayerQuestController {
             Packets.send((ServerPlayerEntity)player, new PacketAchievement((Text)Text.translatable((String)"quest.newquest"), (Text)Text.translatable((String)quest.title), 2));
             Packets.send((ServerPlayerEntity)player, new PacketChat((Text)Text.translatable((String)"quest.newquest").append(":").append((Text)Text.translatable((String)quest.title))));
             playerdata.updateClient = true;
+            playerdata.save(false);
         }
     }
 
@@ -112,6 +113,7 @@ public class PlayerQuestController {
             }
         }
         playerdata.updateClient = true;
+        playerdata.save(false);
     }
 
     public static Vector<Quest> getActiveQuests(PlayerEntity player) {

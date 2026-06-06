@@ -21,8 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value={WorldSaveHandler.class})
 public class MixinPlayerDataStorage {
-    @Inject(method={"save"}, at={@At(value="TAIL")})
-    public void save(PlayerEntity player, CallbackInfo ci) {
+    @Inject(method={"savePlayerData"}, at={@At(value="TAIL")})
+    public void savePlayerData(PlayerEntity player, CallbackInfo ci) {
         PlayerData.get(player).save(false);
     }
 }

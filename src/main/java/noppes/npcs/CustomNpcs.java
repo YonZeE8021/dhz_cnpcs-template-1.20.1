@@ -80,6 +80,7 @@ import net.minecraft.network.packet.s2c.play.ScoreboardPlayerUpdateS2CPacket;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.util.WorldSavePath;
@@ -120,10 +121,12 @@ import noppes.npcs.controllers.SpawnController;
 import noppes.npcs.controllers.TransportController;
 import noppes.npcs.controllers.VisibilityController;
 import noppes.npcs.controllers.data.Availability;
+import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.mixin.ScoreBoardMixin;
 import noppes.npcs.packets.Packets;
 import noppes.npcs.shared.common.util.LogWriter;
+import noppes.npcs.util.CustomNPCsScheduler;
 
 public class CustomNpcs
 implements ModInitializer,
@@ -256,6 +259,14 @@ ServerLifecycleEvents.ServerStarted {
         Packets.register();
         ServerLifecycleEvents.SERVER_STARTING.register(this);
         ServerLifecycleEvents.SERVER_STARTED.register(this);
+        ServerLifecycleEvents.SERVER_STOPPING.register(this::onServerStopping);
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            if (handler.player.getWorld() instanceof ServerWorld) {
+                PlayerData data = PlayerData.get((PlayerEntity)handler.player);
+                data.save(false, true);
+                PlayerData.removeFromCache(handler.player.getUuid());
+            }
+        });
         ServerTickEvents.END_SERVER_TICK.register(new SkinEventHandler());
         ServerPlayConnectionEvents.JOIN.register(new SkinEventHandler());
         UseEntityCallback.EVENT.register(new ServerEventsHandler());
@@ -347,6 +358,13 @@ ServerLifecycleEvents.ServerStarted {
         WrapperNpcAPI.clearCache();
         CmdSchematics.names.clear();
         CmdSchematics.names.addAll(SchematicController.Instance.list());
+    }
+
+    private void onServerStopping(MinecraftServer server) {
+        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            PlayerData.get((PlayerEntity)player).save(false, true);
+        }
+        CustomNPCsScheduler.flushAll();
     }
 
     static {

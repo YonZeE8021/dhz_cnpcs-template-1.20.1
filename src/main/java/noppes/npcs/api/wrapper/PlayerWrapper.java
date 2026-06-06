@@ -243,6 +243,7 @@ implements IPlayer {
         MutableText text = Text.translatable((String)"quest.newquest").append(":").append((Text)Text.translatable((String)quest.title));
         Packets.send((ServerPlayerEntity)this.entity, new PacketChat((Text)text));
         data.updateClient = true;
+        data.save(false);
     }
 
     @Override
@@ -259,9 +260,7 @@ implements IPlayer {
         if (quest == null) {
             return;
         }
-        PlayerData data = this.getData();
-        data.questData.finishedQuests.put(id, System.currentTimeMillis());
-        data.updateClient = true;
+        PlayerQuestController.setQuestFinished(quest, (PlayerEntity)this.entity);
     }
 
     @Override
@@ -273,6 +272,7 @@ implements IPlayer {
         PlayerData data = this.getData();
         data.questData.activeQuests.remove(id);
         data.updateClient = true;
+        data.save(false);
     }
 
     @Override
@@ -285,6 +285,7 @@ implements IPlayer {
         data.questData.activeQuests.remove(id);
         data.questData.finishedQuests.remove(id);
         data.updateClient = true;
+        data.save(false);
     }
 
     @Override

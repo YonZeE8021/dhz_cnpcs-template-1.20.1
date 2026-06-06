@@ -192,6 +192,7 @@ ServerLivingEntityEvents.AfterDeath {
             }
             killed.put(name, amount + 1);
             quest.setKilled(data, killed);
+            pdata.saveQuestProgress(false);
             pdata.updateClient = true;
         }
         playerdata.checkQuestCompletion(player, 2);

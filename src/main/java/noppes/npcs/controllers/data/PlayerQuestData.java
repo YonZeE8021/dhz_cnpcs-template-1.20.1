@@ -29,6 +29,7 @@ import noppes.npcs.packets.Packets;
 import noppes.npcs.packets.client.PacketAchievement;
 import noppes.npcs.packets.client.PacketChat;
 import noppes.npcs.quests.QuestInterface;
+import noppes.npcs.shared.common.util.LogWriter;
 
 public class PlayerQuestData {
     public HashMap<Integer, QuestData> activeQuests = new HashMap();
@@ -55,7 +56,10 @@ public class PlayerQuestData {
                 NbtCompound nbttagcompound = list2.getCompound(i);
                 int id = nbttagcompound.getInt("Quest");
                 Quest quest = QuestController.instance.quests.get(id);
-                if (quest == null) continue;
+                if (quest == null) {
+                    LogWriter.warn("Skipping active quest " + id + " because quest definition is missing");
+                    continue;
+                }
                 QuestData data = new QuestData(quest);
                 data.readAdditionalSaveData(nbttagcompound);
                 activeQuests.put(id, data);
@@ -111,6 +115,9 @@ public class PlayerQuestData {
                 continue;
             }
             data.isCompleted = false;
+        }
+        if (bo) {
+            PlayerData.get((PlayerEntity)player).saveQuestProgress(true);
         }
         return bo;
     }

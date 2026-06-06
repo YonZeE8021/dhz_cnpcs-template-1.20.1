@@ -45,7 +45,8 @@ import noppes.npcs.util.CustomNPCsScheduler;
 import noppes.npcs.util.NBTJsonUtil;
 
 public class PlayerData {
-    private static Map<Integer, PlayerData> dataMap = new HashMap<Integer, PlayerData>();
+    private static final Map<UUID, PlayerData> dataMap = new HashMap<UUID, PlayerData>();
+    private static final long QUEST_SAVE_DEBOUNCE_MS = 30000L;
     public BlockPos scriptBlockPos = BlockPos.ORIGIN;
     public PlayerDialogData dialogData = new PlayerDialogData();
     public PlayerBankData bankData = new PlayerBankData();
@@ -71,6 +72,7 @@ public class PlayerData {
     public ItemStack prevHeldItem = ItemStack.EMPTY;
     public Entity mounted;
     public UUID iAmStealingYourDatas = UUID.randomUUID();
+    private long lastQuestProgressSaveMs = 0L;
     private static final Identifier key = new Identifier("customnpcs", "playerdata");
 
     public void setNBT(NbtCompound data) {
@@ -175,25 +177,52 @@ public class PlayerData {
     }
 
     public synchronized void save(boolean update) {
+        this.save(update, false);
+    }
+
+    public synchronized void save(boolean update, boolean sync) {
+        if (this.uuid == null || this.uuid.isEmpty()) {
+            return;
+        }
         NbtCompound compound = this.getNBT();
-        String filename = this.uuid + ".json";
-        CustomNPCsScheduler.runTack(() -> {
-            try {
-                File saveDir = CustomNpcs.getLevelSaveDirectory("playerdata");
-                File file = new File(saveDir, filename + "_new");
-                File file1 = new File(saveDir, filename);
-                NBTJsonUtil.SaveFile(file, compound);
-                if (file1.exists()) {
-                    file1.delete();
-                }
-                file.renameTo(file1);
-            }
-            catch (Exception e) {
-                LogWriter.except(e);
-            }
-        });
+        CustomNPCsScheduler.queuePlayerDataSave(this.uuid, compound, sync);
         if (update) {
             this.updateClient = true;
+        }
+    }
+
+    public void saveQuestProgress(boolean force) {
+        long now = System.currentTimeMillis();
+        if (!force && now - this.lastQuestProgressSaveMs < QUEST_SAVE_DEBOUNCE_MS) {
+            return;
+        }
+        this.lastQuestProgressSaveMs = now;
+        this.save(false);
+    }
+
+    public static void writePlayerDataFile(String uuid, NbtCompound compound) {
+        try {
+            File saveDir = CustomNpcs.getLevelSaveDirectory("playerdata");
+            if (saveDir == null) {
+                return;
+            }
+            String filename = uuid + ".json";
+            File target = new File(saveDir, filename);
+            File temp = new File(saveDir, filename + "_new");
+            File backup = new File(saveDir, filename + ".bak");
+            NBTJsonUtil.SaveFile(temp, compound);
+            if (target.exists()) {
+                if (backup.exists()) {
+                    backup.delete();
+                }
+                target.renameTo(backup);
+            }
+            if (!temp.renameTo(target)) {
+                LogWriter.error("Failed to rename player data file: " + target.getAbsolutePath());
+            }
+        }
+        catch (Exception e) {
+            LogWriter.except(e);
         }
     }
 
@@ -213,6 +242,16 @@ public class PlayerData {
         }
         catch (Exception e) {
             LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
+            File backup = new File(saveDir, (String)filename + ".bak");
+            if (backup.exists()) {
+                try {
+                    LogWriter.warn("Loading player data from backup: " + backup.getAbsolutePath());
+                    return NBTJsonUtil.LoadFile(backup);
+                }
+                catch (Exception backupError) {
+                    LogWriter.error("Error loading backup: " + backup.getAbsolutePath(), backupError);
+                }
+            }
         }
         return new NbtCompound();
     }
@@ -221,15 +260,28 @@ public class PlayerData {
         if (player.getWorld().isClient) {
             return CustomNpcs.proxy.getPlayerData(player);
         }
-        PlayerData data = dataMap.computeIfAbsent(player.getId(), i -> new PlayerData());
+        UUID playerUuid = player.getUuid();
+        PlayerData data = dataMap.get(playerUuid);
+        if (data == null) {
+            data = new PlayerData();
+            dataMap.put(playerUuid, data);
+        }
         if (data.player == null) {
             data.player = player;
             data.playerLevel = player.experienceLevel;
             data.scriptData = new PlayerScriptData(player);
-            NbtCompound compound = PlayerData.loadPlayerData(player.getUuid().toString());
+            NbtCompound compound = PlayerData.loadPlayerData(playerUuid.toString());
             data.setNBT(compound);
+        } else {
+            data.player = player;
+            if (data.scriptData == null) {
+                data.scriptData = new PlayerScriptData(player);
+            }
         }
         return data;
     }
-}
 
+    public static void removeFromCache(UUID uuid) {
+        dataMap.remove(uuid);
+    }
+}
