@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value={LivingEntityRenderer.class})
 public class LivingRendererMixin<T extends EntityCustomNpc, M extends BipedEntityModel<T>> {
-    @Inject(at={@At(value="HEAD")}, method={"addLayer"})
+    @Inject(at={@At(value="HEAD")}, method={"addFeature"})
     private void spawnOriginalMobs(FeatureRenderer<T, M> layer, CallbackInfoReturnable<Boolean> cir) {
         LivingEntityRenderer<?, ?> renderer = (LivingEntityRenderer<?, ?>)(Object)this;
         if (renderer instanceof RenderCustomNpc) {

@@ -29,7 +29,7 @@ public class MixinClientPacketListener {
     @Shadow
     private ClientWorld world;
 
-    @Inject(method={"handleAddEntity"}, at={@At(value="TAIL")})
+    @Inject(method={"onEntitySpawn"}, at={@At(value="TAIL")})
     public void handleAddEntity(EntitySpawnS2CPacket packet, CallbackInfo ci) {
         IMixinClientboundAddEntityPacket accessor = (IMixinClientboundAddEntityPacket)packet;
         if (this.world.getEntityById(packet.getId()) instanceof EntityNPCInterface) {

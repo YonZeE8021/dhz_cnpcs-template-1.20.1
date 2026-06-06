@@ -38,14 +38,14 @@ implements IEntityPersistentData {
         return this.CNPC_tag;
     }
 
-    @Inject(method={"saveAdditional"}, at={@At(value="TAIL")})
+    @Inject(method={"writeNbt"}, at={@At(value="TAIL")})
     public void save(NbtCompound tag, CallbackInfo ci) {
         if (this.CNPC_tag != null) {
             tag.put("CNPC_persistantData", (NbtElement)this.CNPC_tag);
         }
     }
 
-    @Inject(method={"load"}, at={@At(value="TAIL")})
+    @Inject(method={"readNbt"}, at={@At(value="TAIL")})
     public void read(NbtCompound compound, CallbackInfo ci) {
         if (compound.contains("CNPC_persistantData")) {
             this.CNPC_tag = compound.getCompound("CNPC_persistantData");

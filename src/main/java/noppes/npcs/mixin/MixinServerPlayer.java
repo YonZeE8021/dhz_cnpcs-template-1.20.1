@@ -38,7 +38,7 @@ extends PlayerEntity {
         super(level, pos, yRot, gameProfile);
     }
 
-    @Inject(method={"findDimensionEntryPoint"}, at={@At(value="HEAD")}, cancellable=true)
+    @Inject(method={"getTeleportTarget"}, at={@At(value="HEAD")}, cancellable=true)
     protected void findDimensionEntryPoint(ServerWorld destination, CallbackInfoReturnable<TeleportTarget> cir) {
         if (this.getMainHandStack().isOf(CustomItems.teleporter)) {
             cir.setReturnValue(new TeleportTarget(this.getPos(), Vec3d.ZERO, this.getYaw(), this.getPitch()));

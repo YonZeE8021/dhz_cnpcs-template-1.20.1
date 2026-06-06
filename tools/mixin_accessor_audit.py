@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-校验 Mixin 接口中的 @Accessor / @Invoker 目标名是否与当前 Yarn 映射一致。
+校验 Mixin 中的 @Accessor / @Invoker / @Inject / @Redirect 目标名是否与当前 Yarn 映射一致。
 
 依据：Fabric Maven 上的 yarn-<mc+build>-v2.jar 内 mappings/mappings.tiny
 
@@ -11,8 +11,9 @@
   py -3 tools/mixin_accessor_audit.py --yarn 1.20.1+build.10
 
 说明:
-  - 仅检查「声明为 @Mixin 的目标类」上是否**直接**存在该字段/方法名；
-    继承自父类的字段在 Tiny 里不在子类行下，可能产生误报，需人工看 Yarn 文档。
+  - 检查「声明为 @Mixin 的目标类」上是否**直接**存在该字段/方法名；
+    继承自父类的方法在 Tiny 里不在子类行下，可能产生误报，需人工看 Yarn 文档。
+  - @Inject/@Redirect 的 method 支持简单名与带描述符形式；通配符 `*` 会截断到 `(` 前。
   - 自动下载的映射会缓存在 tools/.yarn-cache/
 """
 
@@ -117,6 +118,14 @@ INVOKER_RE = re.compile(
     r"@Invoker(?:\(\s*(?:value\s*=\s*)?[\"']([^\"']+)[\"']\s*\))?",
     re.MULTILINE,
 )
+INJECT_METHOD_RE = re.compile(
+    r"method\s*=\s*\{([^}]+)\}",
+    re.MULTILINE,
+)
+REDIRECT_METHOD_RE = re.compile(
+    r"@Redirect\s*\(\s*method\s*=\s*\{([^}]+)\}",
+    re.MULTILINE,
+)
 
 
 def extract_mixin_targets(text: str, package: str, imports: Dict[str, str]) -> List[str]:
@@ -179,6 +188,90 @@ def infer_invoker_target(method_name: str) -> str:
 
 def slash_name(binary: str) -> str:
     return binary.replace(".", "/")
+
+
+def extract_method_names_from_annotation(raw: str) -> List[str]:
+    names: List[str] = []
+    for part in raw.split(","):
+        part = part.strip().strip('"').strip("'")
+        if not part:
+            continue
+        if "(" in part:
+            part = part[: part.index("(")]
+        if part.endswith("*"):
+            part = part[:-1]
+        if part.startswith("<init>"):
+            continue
+        if part:
+            names.append(part)
+    return names
+
+
+INHERITED_METHOD_SOURCES: Dict[str, List[str]] = {
+    "net/minecraft/entity/LivingEntity": ["net/minecraft/entity/Entity"],
+    "net/minecraft/server/network/ServerPlayerEntity": ["net/minecraft/entity/Entity"],
+    "net/minecraft/block/LeavesBlock": ["net/minecraft/block/Block"],
+    "net/minecraft/block/IceBlock": ["net/minecraft/block/AbstractBlock"],
+    "net/minecraft/block/VineBlock": ["net/minecraft/block/AbstractBlock"],
+    "net/minecraft/client/render/entity/model/AnimalModel": [
+        "net/minecraft/client/render/entity/model/EntityModel",
+        "net/minecraft/client/model/Model",
+    ],
+    "net/minecraft/client/render/entity/model/BipedEntityModel": [
+        "net/minecraft/client/render/entity/model/EntityModel",
+        "net/minecraft/client/model/Model",
+    ],
+    "net/minecraft/world/gen/chunk/NoiseChunkGenerator": ["net/minecraft/world/gen/chunk/ChunkGenerator"],
+    "net/minecraft/client/gui/screen/ingame/HandledScreen": [
+        "net/minecraft/client/gui/screen/Screen",
+        "net/minecraft/client/gui/ParentElement",
+        "net/minecraft/client/gui/Element",
+    ],
+    "net/minecraft/client/network/ClientPlayNetworkHandler": [
+        "net/minecraft/network/listener/ClientPlayPacketListener",
+    ],
+}
+
+
+def method_available_on_class(
+    cls: str,
+    method_name: str,
+    class_methods: Dict[str, Set[str]],
+) -> bool:
+    methods = class_methods.get(cls)
+    if methods and method_name in methods:
+        return True
+    for parent in INHERITED_METHOD_SOURCES.get(cls, []):
+        parent_methods = class_methods.get(parent)
+        if parent_methods and method_name in parent_methods:
+            return True
+    return False
+
+
+def check_method_exists(
+    path: Path,
+    line_no: int,
+    kind: str,
+    method_name: str,
+    mixin_targets: List[str],
+    class_methods: Dict[str, Set[str]],
+) -> List[str]:
+    issues: List[str] = []
+    for cls in mixin_targets:
+        methods = class_methods.get(cls)
+        if methods is None and cls not in INHERITED_METHOD_SOURCES:
+            issues.append(f"{path}:{line_no}: 映射中无类 {cls} (检查 import / @Mixin)")
+            continue
+        if method_available_on_class(cls, method_name, class_methods):
+            continue
+        near = sorted(
+            x for x in methods if method_name.lower() in x.lower() or x.lower() in method_name.lower()
+        )[:8]
+        hint = f"  候选(模糊): {near}" if near else f"  该类部分方法: {sorted(list(methods))[:12]}..."
+        issues.append(
+            f"{path}:{line_no}: 类 {cls.replace('/', '.')} 无方法 `{method_name}` ({kind})\n{hint}"
+        )
+    return issues
 
 
 def scan_file(
@@ -259,11 +352,27 @@ def scan_file(
                         f"{path}:{i+1}: 类 {cls.replace('/', '.')} 无方法 `{method_name}` (Invoker)\n{hint}"
                     )
 
+        if "@Inject" in line:
+            im = INJECT_METHOD_RE.search(line)
+            if im:
+                for method_name in extract_method_names_from_annotation(im.group(1)):
+                    issues.extend(
+                        check_method_exists(path, i + 1, "Inject", method_name, mixin_targets, class_methods)
+                    )
+
+        if "@Redirect" in line:
+            rm = REDIRECT_METHOD_RE.search(line)
+            if rm:
+                for method_name in extract_method_names_from_annotation(rm.group(1)):
+                    issues.extend(
+                        check_method_exists(path, i + 1, "Redirect", method_name, mixin_targets, class_methods)
+                    )
+
     return issues
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="审计 Mixin Accessor/Invoker 与 Yarn 命名是否一致")
+    ap = argparse.ArgumentParser(description="审计 Mixin Accessor/Invoker/Inject/Redirect 与 Yarn 命名是否一致")
     ap.add_argument(
         "--project-root",
         type=Path,

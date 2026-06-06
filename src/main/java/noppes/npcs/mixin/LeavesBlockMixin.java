@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value={LeavesBlock.class})
 public class LeavesBlockMixin {
-    @Inject(at={@At(value="HEAD")}, method={"isRandomlyTicking"}, cancellable=true)
+    @Inject(at={@At(value="HEAD")}, method={"hasRandomTicks"}, cancellable=true)
     private void setupAnimPre(BlockState state, CallbackInfoReturnable<Boolean> cir) {
         if (!CustomNpcs.LeavesDecayEnabled) {
             cir.setReturnValue(false);

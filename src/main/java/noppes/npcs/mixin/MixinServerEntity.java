@@ -37,7 +37,7 @@ public class MixinServerEntity {
     @Final
     private Entity entity;
 
-    @Inject(method={"addPairing"}, at={@At(value="TAIL")})
+    @Inject(method={"startTracking"}, at={@At(value="TAIL")})
     public void addPairing(ServerPlayerEntity player, CallbackInfo ci) {
         if (this.entity instanceof EntityNPCInterface) {
             EntityNPCInterface npc = (EntityNPCInterface)this.entity;
@@ -54,7 +54,7 @@ public class MixinServerEntity {
         Packets.send(player, new PacketMarkData(this.entity.getId(), data.getNBT()));
     }
 
-    @Inject(method={"removePairing"}, at={@At(value="TAIL")})
+    @Inject(method={"stopTracking"}, at={@At(value="TAIL")})
     public void removePairing(ServerPlayerEntity player, CallbackInfo ci) {
         if (this.entity instanceof EntityNPCInterface) {
             EntityNPCInterface npc = (EntityNPCInterface)this.entity;

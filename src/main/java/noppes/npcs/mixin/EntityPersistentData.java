@@ -49,7 +49,7 @@ implements IEntityPersistentData {
         return this.CNPC_tag;
     }
 
-    @Inject(method={"saveWithoutId"}, at={@At(value="TAIL")})
+    @Inject(method={"writeNbt"}, at={@At(value="TAIL")})
     public void save(NbtCompound compound, CallbackInfoReturnable<NbtCompound> cir) {
         if (this.CNPC_tag != null && (Object)this instanceof LivingEntity) {
             MarkData.get((LivingEntity)(Object)this).save();
@@ -57,7 +57,7 @@ implements IEntityPersistentData {
         }
     }
 
-    @Inject(method={"load"}, at={@At(value="TAIL")})
+    @Inject(method={"readNbt"}, at={@At(value="TAIL")})
     public void read(NbtCompound compound, CallbackInfo ci) {
         if (compound.contains("CNPC_persistantData") && (Object)this instanceof LivingEntity) {
             this.CNPC_tag = compound.getCompound("CNPC_persistantData");

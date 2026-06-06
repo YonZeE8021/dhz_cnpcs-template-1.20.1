@@ -178,6 +178,8 @@ InvalidAccessorException: No candidates were found matching field_6012:I in net/
 - `method = "...)` 描述符必须与本仓库 **当前 Yarn 版本** 一致。
 - 升级 Yarn：`gradle.properties` 中 `yarn_mappings` 变更后全量编译 + `runClient` + 启动器各跑一次。
 - **`remapJar` 日志**若出现 `Cannot remap XXX because it does not exist in any of the targets [...]`：说明 **Mixin 字符串仍指向旧 Yarn 方法名**，需打开对应类对照 Yarn javadoc 或 `mappings.tiny` 修正。
+- 修改 Mixin 后运行 `py -3 tools/mixin_accessor_audit.py`（已支持 `@Inject` / `@Redirect`）；继承自父类的方法在 Tiny 中可能报误报，以 **`gradlew clean build` 零 `Cannot remap`** 为准。
+- 验收命令（PowerShell）：`./gradlew.bat clean build 2>&1 | Select-String "Cannot remap"` 应无输出。
 
 ---
 
@@ -416,7 +418,7 @@ Fabric Loader 只认 **`id` 字段**。本 jar 的 **`id` 为 `dhz_cnpcs`**，�
 2. **禁止随意修改** `Registry.register(..., "customnpcs:...", ...)` 中的 id，除非同步迁移存档与文档并明确破坏性版本号。
 3. **新增 Mixin**：同步更新 `customnpcs.mixins.json`，并选对 `mixins` vs `client`。
 4. **Accessor 命名**：遵循第 4.2 节，避免与父类 intermediary 字段混淆。
-5. **验证顺序**：`compileJava` → 功能相关 `runClient` → **`build` 取 `build/libs` jar** 在启动器烟测。
+5. **验证顺序**：`compileJava` → `py -3 tools/mixin_accessor_audit.py` → **`gradlew clean build`（零 `Cannot remap`）** → 功能相关 `runClient` → 取 `build/libs` jar 在启动器烟测。
 
 ---
 

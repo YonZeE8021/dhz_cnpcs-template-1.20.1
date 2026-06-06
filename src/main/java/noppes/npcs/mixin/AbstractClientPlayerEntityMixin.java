@@ -36,7 +36,7 @@ extends PlayerEntity {
         super(p_250508_, p_250289_, p_251702_, p_252153_);
     }
 
-    @Inject(at={@At(value="RETURN")}, method={"getSkinTextureLocation"}, cancellable=true)
+    @Inject(at={@At(value="RETURN")}, method={"getSkinTexture"}, cancellable=true)
     public void getSkinLocation(CallbackInfoReturnable<Identifier> cir) {
         cir.setReturnValue(((Identifier)MoreObjects.firstNonNull(ClientSkinController.getSkinForPlayer(this.getDisplayName().getString()), ((Identifier)cir.getReturnValue()))));
     }

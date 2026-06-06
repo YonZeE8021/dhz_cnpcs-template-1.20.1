@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value={ClientPlayNetworkHandler.class})
 public class ClientPlayNetHandlerMixin {
-    @Inject(at={@At(value="TAIL")}, method={"handleAddEntity"})
+    @Inject(at={@At(value="TAIL")}, method={"onEntitySpawn"})
     private void handleAddEntity(EntitySpawnS2CPacket packet, CallbackInfo ci) {
         EntityProjectile entity = null;
         ClientWorld level = MinecraftClient.getInstance().world;

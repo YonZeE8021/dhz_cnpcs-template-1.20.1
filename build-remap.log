@@ -1,0 +1,25 @@
+
+> Configure project :
+Fabric Loom: 1.16.3
+
+> Task :clean
+
+> Task :compileJava
+娉? 鏌愪簺杈撳叆鏂囦欢浣跨敤鎴栬鐩栦簡宸茶繃鏃剁殑 API銆?
+娉? 鏈夊叧璇︾粏淇℃伅, 璇蜂娇鐢?-Xlint:deprecation 閲嶆柊缂栬瘧銆?
+娉? 鏌愪簺杈撳叆鏂囦欢浣跨敤浜嗘湭缁忔鏌ユ垨涓嶅畨鍏ㄧ殑鎿嶄綔銆?
+娉? 鏈夊叧璇︾粏淇℃伅, 璇蜂娇鐢?-Xlint:unchecked 閲嶆柊缂栬瘧銆?
+
+> Task :processResources
+> Task :classes
+> Task :jar
+
+> Task :processIncludeJars
+(15.4) is not valid semver for dependency org.openjdk.nashorn:nashorn-core:15.4
+
+> Task :remapJar
+
+[Incubating] Problems report is available at: file:///D:/DaHuZhou/modDevelop/dhz_cnpcs-template-1.20.1/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 14s
+6 actionable tasks: 6 executed

@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class AgeableModelMixin<T extends EntityNPCInterface> {
     private boolean isCanceled = false;
 
-    @Inject(at={@At(value="HEAD")}, method={"renderToBuffer"}, cancellable=true)
+    @Inject(at={@At(value="HEAD")}, method={"render"}, cancellable=true)
     private void renderToBuffer(MatrixStack stack, VertexConsumer builder, int light, int overlay, float r, float g, float b, float a, CallbackInfo callbackInfo) {
         if (!this.isCanceled && RenderNPCInterface.currentNpc != null && RenderNPCInterface.currentNpc.display.getTint() < 0xFFFFFF) {
             this.isCanceled = true;

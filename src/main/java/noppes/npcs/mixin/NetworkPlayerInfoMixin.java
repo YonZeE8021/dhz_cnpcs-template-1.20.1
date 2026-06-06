@@ -33,7 +33,7 @@ public abstract class NetworkPlayerInfoMixin {
     @Final
     private GameProfile profile;
 
-    @Inject(at={@At(value="RETURN")}, method={"getSkinLocation"}, cancellable=true)
+    @Inject(at={@At(value="RETURN")}, method={"getSkinTexture"}, cancellable=true)
     public void getSkinLocation(CallbackInfoReturnable<Identifier> cir) {
         cir.setReturnValue(((Identifier)MoreObjects.firstNonNull(ClientSkinController.getSkinForPlayer(this.profile.getName()), ((Identifier)cir.getReturnValue()))));
     }

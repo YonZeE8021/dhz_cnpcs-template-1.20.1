@@ -29,7 +29,7 @@ public class MixinKeyboardHandler {
     @Final
     private MinecraftClient client;
 
-    @Inject(method={"keyPress"}, at={@At(value="TAIL")})
+    @Inject(method={"onKey"}, at={@At(value="TAIL")})
     public void keyPress(long windowPointer, int key, int scanCode, int action, int modifiers, CallbackInfo ci) {
         if (windowPointer == this.client.getWindow().getHandle()) {
             ClientTickHandler.onKey(key, scanCode, modifiers, action);

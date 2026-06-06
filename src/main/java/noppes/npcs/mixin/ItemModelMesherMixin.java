@@ -32,7 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value={ItemModels.class})
 public class ItemModelMesherMixin {
-    @Inject(at={@At(value="HEAD")}, method={"getItemModel*"}, cancellable=true)
+    @Inject(at={@At(value="HEAD")}, method={"getModel"}, cancellable=true)
     public void getModel(ItemStack item, CallbackInfoReturnable<BakedModel> cir) {
         if (item.getItem() == CustomItems.scripted_item) {
             BakedModel model;

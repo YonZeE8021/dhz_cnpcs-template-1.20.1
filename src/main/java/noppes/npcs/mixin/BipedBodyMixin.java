@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value={BipedEntityModel.class})
 public class BipedBodyMixin<T extends LivingEntity> {
-    @Inject(at={@At(value="HEAD")}, method={"setupAnim"})
+    @Inject(at={@At(value="HEAD")}, method={"setAngles"})
     private void setupAnimPre(T livingEntity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo callbackInfo) {
         BipedEntityModel bipedModel = (BipedEntityModel)(Object)this;
         if (livingEntity instanceof EntityCustomNpc && bipedModel instanceof PlayerEntityModel) {
@@ -44,7 +44,7 @@ public class BipedBodyMixin<T extends LivingEntity> {
         }
     }
 
-    @Inject(at={@At(value="TAIL")}, method={"setupAnim"})
+    @Inject(at={@At(value="TAIL")}, method={"setAngles"})
     private void setupAnimPost(T livingEntity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo callbackInfo) {
         BipedEntityModel bipedModel = (BipedEntityModel)(Object)this;
         if (livingEntity instanceof EntityCustomNpc) {

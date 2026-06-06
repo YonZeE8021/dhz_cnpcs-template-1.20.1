@@ -6,6 +6,7 @@
     "AbstractContainerMenuMixin",
     "ArmorMaterialsMixin",
     "BaseSpawnerMixin",
+    "BlockEntityPersistentData",
     "ChunkMapMixin",
     "EntityIMixin",
     "EntityLivingIMixin",

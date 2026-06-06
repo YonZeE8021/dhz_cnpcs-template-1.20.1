@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value={CommandManager.class})
 public class MixinCommands {
-    @Inject(method={"performCommand"}, at={@At(value="HEAD")})
+    @Inject(method={"execute"}, at={@At(value="HEAD")})
     public void performCommand(ParseResults<ServerCommandSource> parseResults, String command, CallbackInfoReturnable<Integer> cir) {
         ServerEventsHandler.allowCommandMessage(parseResults);
     }

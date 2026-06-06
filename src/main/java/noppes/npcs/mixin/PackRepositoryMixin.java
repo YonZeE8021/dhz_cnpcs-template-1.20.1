@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value={ResourcePackManager.class})
 public class PackRepositoryMixin {
-    @Inject(at={@At(value="TAIL")}, method={"openAllSelected"}, cancellable=true)
+    @Inject(at={@At(value="TAIL")}, method={"createResourcePacks"}, cancellable=true)
     private void reload(CallbackInfoReturnable<List<ResourcePack>> ci) {
         ArrayList<DirectoryResourcePack> l = new ArrayList<DirectoryResourcePack>((Collection)ci.getReturnValue());
         l.add(new DirectoryResourcePack("cnpcs", CustomNpcs.Dir.toPath(), false));

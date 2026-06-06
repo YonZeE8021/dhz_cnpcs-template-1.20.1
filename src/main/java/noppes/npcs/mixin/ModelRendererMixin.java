@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ModelRendererMixin {
     public ModelPartConfig cnpcconfig;
 
-    @Inject(at={@At(value="HEAD")}, method={"translateAndRotate"})
+    @Inject(at={@At(value="HEAD")}, method={"translate"})
     private void translateAndRotatePre(MatrixStack mStack, CallbackInfo callbackInfo) {
         this.cnpcconfig = this.getCnpcconfig();
         if (this.cnpcconfig != null) {
@@ -35,7 +35,7 @@ public class ModelRendererMixin {
         }
     }
 
-    @Inject(at={@At(value="TAIL")}, method={"translateAndRotate"})
+    @Inject(at={@At(value="TAIL")}, method={"rotate"})
     private void translateAndRotatePost(MatrixStack mStack, CallbackInfo callbackInfo) {
         this.cnpcconfig = this.getCnpcconfig();
         if (this.cnpcconfig != null) {

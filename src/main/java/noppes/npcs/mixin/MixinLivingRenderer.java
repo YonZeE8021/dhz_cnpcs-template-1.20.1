@@ -39,7 +39,7 @@ implements FeatureRendererContext<T, M> {
         super(context);
     }
 
-    @Inject(method={"render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"}, at={@At(value="TAIL")})
+    @Inject(method={"render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"}, at={@At(value="TAIL")})
     public void render(T entity, float entityYaw, float partialTicks, MatrixStack poseStack, VertexConsumerProvider buffer, int packedLight, CallbackInfo ci) {
         ClientEventHandler.post(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }

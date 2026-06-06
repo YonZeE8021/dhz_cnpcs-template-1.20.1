@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value={NoiseChunkGenerator.class})
 public class NoiseChunkGeneratorMixin {
-    @Inject(at={@At(value="HEAD")}, method={"spawnOriginalMobs"}, cancellable=false)
+    @Inject(at={@At(value="HEAD")}, method={"populateEntities"}, cancellable=false)
     private void spawnOriginalMobs(ChunkRegion region, CallbackInfo ci) {
         ChunkPos chunkpos = region.getCenterPos();
         int x = chunkpos.getStartX();
