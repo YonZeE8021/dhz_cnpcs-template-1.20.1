@@ -29,7 +29,9 @@ import noppes.npcs.packets.Packets;
 import noppes.npcs.packets.client.PacketGuiOpen;
 import noppes.npcs.packets.client.PacketGuiScrollList;
 import noppes.npcs.packets.client.PacketNpcRole;
+import noppes.npcs.packets.client.PacketTraderLimitSync;
 import noppes.npcs.roles.RoleTransporter;
+import noppes.npcs.roles.RoleTrader;
 import noppes.npcs.util.CustomNPCsScheduler;
 
 public class SPacketGuiOpen
@@ -69,6 +71,10 @@ extends PacketServerBasic {
             npc.role.save(comp);
             comp.putInt("Role", npc.role.getType());
             Packets.send((ServerPlayerEntity)player, new PacketNpcRole(npc.getId(), comp));
+            if (gui == EnumGuiType.PlayerTrader && npc.role instanceof RoleTrader) {
+                RoleTrader trader = (RoleTrader)npc.role;
+                Packets.send((ServerPlayerEntity)player, PacketTraderLimitSync.forTrader(player, trader));
+            }
         }
         CustomNPCsScheduler.runTack(() -> player.getServer().submit(() -> {
             if (!gui.hasContainer) {

@@ -24,7 +24,11 @@ import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.api.event.RoleEvent;
 import noppes.npcs.containers.ContainerNpcInterface;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.packets.Packets;
+import noppes.npcs.packets.client.PacketTraderLimitSync;
 import noppes.npcs.roles.RoleTrader;
+import noppes.npcs.util.TraderLimitHelper;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ContainerNPCTrader
 extends ContainerNpcInterface {
@@ -75,16 +79,23 @@ extends ContainerNpcInterface {
         if (!this.canGivePlayer(item, entityplayer)) {
             return;
         }
+        TraderLimitHelper.LimitResult limitResult = TraderLimitHelper.checkPurchase(entityplayer, this.role, i);
+        if (!limitResult.allowed) {
+            RoleEvent.TradeLimitEvent limitEvent = new RoleEvent.TradeLimitEvent(entityplayer, this.npc.wrappedNPC, i, item, limitResult.reason, limitResult.playerRemaining);
+            if (!EventHooks.onNPCRole(this.npc, limitEvent)) {
+                return;
+            }
+        }
         ItemStack currency = this.role.inventoryCurrency.getStack(i);
         if (!this.canBuy(currency, currency2 = this.role.inventoryCurrency.getStack(i + 18), entityplayer)) {
-            RoleEvent.TradeFailedEvent event = new RoleEvent.TradeFailedEvent(entityplayer, this.npc.wrappedNPC, item, currency, currency2);
+            RoleEvent.TradeFailedEvent event = new RoleEvent.TradeFailedEvent(entityplayer, this.npc.wrappedNPC, i, item, currency, currency2);
             EventHooks.onNPCRole(this.npc, event);
             if (event.receiving != null) {
                 this.setCursorStack(event.receiving.getMCItemStack());
             }
             return;
         }
-        RoleEvent.TraderEvent event = new RoleEvent.TraderEvent(entityplayer, this.npc.wrappedNPC, item, currency, currency2);
+        RoleEvent.TraderEvent event = new RoleEvent.TraderEvent(entityplayer, this.npc.wrappedNPC, i, item, currency, currency2);
         if (EventHooks.onNPCRole(this.npc, event)) {
             return;
         }
@@ -103,6 +114,10 @@ extends ContainerNpcInterface {
         if (event.sold != null && !event.sold.isEmpty()) {
             soldItem = event.sold.getMCItemStack();
             this.givePlayer(soldItem.copy(), entityplayer);
+        }
+        TraderLimitHelper.recordPurchase(entityplayer, this.role, i);
+        if (entityplayer instanceof ServerPlayerEntity) {
+            Packets.send((ServerPlayerEntity)entityplayer, PacketTraderLimitSync.forTrader(entityplayer, this.role));
         }
     }
 

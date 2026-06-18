@@ -1,15 +1,5 @@
 /*
  * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.mojang.blaze3d.systems.RenderSystem
- *  net.minecraft.entity.player.PlayerInventory
- *  net.minecraft.nbt.NbtCompound
- *  net.minecraft.text.Text
- *  net.minecraft.util.Identifier
- *  net.minecraft.client.gui.DrawContext
- *  net.minecraft.client.gui.screen.Screen
- *  net.minecraft.client.render.GameRenderer
  */
 package noppes.npcs.client.gui.roles;
 
@@ -21,14 +11,19 @@ import net.minecraft.util.Identifier;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.text.Text;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
+import noppes.npcs.client.gui.SubGuiNpcTraderLimit;
+import noppes.npcs.client.gui.SubGuiNpcTraderVariables;
 import noppes.npcs.client.gui.util.GuiContainerNPCInterface2;
 import noppes.npcs.containers.ContainerNPCTraderSetup;
 import noppes.npcs.packets.Packets;
 import noppes.npcs.packets.server.SPacketNpcMarketSet;
 import noppes.npcs.packets.server.SPacketNpcRoleSave;
 import noppes.npcs.roles.RoleTrader;
+import noppes.npcs.roles.TraderSlotLimit;
+import noppes.npcs.util.TraderLimitHelper;
 import noppes.npcs.shared.client.gui.components.GuiButtonNop;
 import noppes.npcs.shared.client.gui.components.GuiButtonYesNo;
 import noppes.npcs.shared.client.gui.components.GuiLabel;
@@ -56,10 +51,39 @@ implements ITextfieldListener {
         this.setBackground("tradersetup.png");
         this.addLabel(new GuiLabel(0, "role.marketname", this.guiLeft + 214, this.guiTop + 150));
         this.addTextField(new GuiTextFieldNop(0, (Screen)this, this.guiLeft + 214, this.guiTop + 160, 180, 20, this.role.marketName));
-        this.addLabel(new GuiLabel(1, "gui.ignoreDamage", this.guiLeft + 260, this.guiTop + 29));
-        this.addButton(new GuiButtonYesNo((IGuiInterface)this, 1, this.guiLeft + 340, this.guiTop + 24, this.role.ignoreDamage));
-        this.addLabel(new GuiLabel(2, "gui.ignoreNBT", this.guiLeft + 260, this.guiTop + 51));
-        this.addButton(new GuiButtonYesNo((IGuiInterface)this, 2, this.guiLeft + 340, this.guiTop + 46, this.role.ignoreNBT));
+        int panelX = 290;
+        int panelBtnX = 340;
+        this.addLabel(new GuiLabel(1, "gui.ignoreDamage", this.guiLeft + panelX, this.guiTop + 29));
+        this.addButton(new GuiButtonYesNo((IGuiInterface)this, 1, this.guiLeft + panelBtnX, this.guiTop + 24, this.role.ignoreDamage));
+        this.addLabel(new GuiLabel(2, "gui.ignoreNBT", this.guiLeft + panelX, this.guiTop + 51));
+        this.addButton(new GuiButtonYesNo((IGuiInterface)this, 2, this.guiLeft + panelBtnX, this.guiTop + 46, this.role.ignoreNBT));
+        this.addButton(new GuiButtonNop(this, 3, this.guiLeft + panelX, this.guiTop + 74, 78, 20, "trader.var.title"));
+        int limitBtnH = 16;
+        for (int slot = 0; slot < 18; ++slot) {
+            int x = this.guiLeft + slot % 3 * 94 + 7;
+            int y = this.guiTop + slot / 3 * 22 + 4;
+            this.addButton(new GuiButtonNop(this, 100 + slot, x + 61, y + 1 + limitBtnH / 2, 16, limitBtnH, "trader.limit.short"));
+        }
+        this.updateLimitButtons();
+    }
+
+    private void updateLimitButtons() {
+        for (int slot = 0; slot < 18; ++slot) {
+            GuiButtonNop button = this.getButton(100 + slot);
+            if (button == null) {
+                continue;
+            }
+            TraderSlotLimit limit = this.role.getSlotLimit(slot);
+            button.setMessage(Text.literal(TraderLimitHelper.getLimitShortLabel(limit)));
+        }
+    }
+
+    @Override
+    public void handledScreenTick() {
+        super.handledScreenTick();
+        if (!this.hasSubGui()) {
+            this.updateLimitButtons();
+        }
     }
 
     @Override
@@ -76,6 +100,12 @@ implements ITextfieldListener {
         }
         if (guibutton.id == 2) {
             this.role.ignoreNBT = ((GuiButtonYesNo)guibutton).getBoolean();
+        }
+        if (guibutton.id == 3) {
+            this.setSubGui(new SubGuiNpcTraderVariables(this.role));
+        }
+        if (guibutton.id >= 100 && guibutton.id < 118) {
+            this.setSubGui(new SubGuiNpcTraderLimit(this.role, guibutton.id - 100));
         }
     }
 
@@ -113,4 +143,3 @@ implements ITextfieldListener {
         }
     }
 }
-

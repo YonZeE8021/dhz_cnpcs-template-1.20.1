@@ -51,27 +51,47 @@ extends CustomNPCsEvent {
 
     public static class TradeFailedEvent
     extends RoleEvent {
+        public final int slot;
         public final IItemStack sold;
         public final IItemStack currency1;
         public final IItemStack currency2;
         public IItemStack receiving;
 
-        public TradeFailedEvent(PlayerEntity player, ICustomNpc npc, ItemStack sold, ItemStack currency1, ItemStack currency2) {
+        public TradeFailedEvent(PlayerEntity player, ICustomNpc npc, int slot, ItemStack sold, ItemStack currency1, ItemStack currency2) {
             super(player, npc);
+            this.slot = slot;
             this.currency1 = currency1.isEmpty() ? null : NpcAPI.Instance().getIItemStack(currency1.copy());
             this.currency2 = currency2.isEmpty() ? null : NpcAPI.Instance().getIItemStack(currency2.copy());
             this.sold = NpcAPI.Instance().getIItemStack(sold.copy());
         }
     }
 
+    public static class TradeLimitEvent
+    extends RoleEvent {
+        public final int slot;
+        public final IItemStack sold;
+        public final int reason;
+        public final int playerRemaining;
+
+        public TradeLimitEvent(PlayerEntity player, ICustomNpc npc, int slot, ItemStack sold, int reason, int playerRemaining) {
+            super(player, npc);
+            this.slot = slot;
+            this.reason = reason;
+            this.playerRemaining = playerRemaining;
+            this.sold = NpcAPI.Instance().getIItemStack(sold.copy());
+        }
+    }
+
     public static class TraderEvent
     extends RoleEvent {
+        public final int slot;
         public IItemStack sold;
         public IItemStack currency1;
         public IItemStack currency2;
 
-        public TraderEvent(PlayerEntity player, ICustomNpc npc, ItemStack sold, ItemStack currency1, ItemStack currency2) {
+        public TraderEvent(PlayerEntity player, ICustomNpc npc, int slot, ItemStack sold, ItemStack currency1, ItemStack currency2) {
             super(player, npc);
+            this.slot = slot;
             this.currency1 = currency1.isEmpty() ? null : NpcAPI.Instance().getIItemStack(currency1.copy());
             this.currency2 = currency2.isEmpty() ? null : NpcAPI.Instance().getIItemStack(currency2.copy());
             this.sold = NpcAPI.Instance().getIItemStack(sold.copy());

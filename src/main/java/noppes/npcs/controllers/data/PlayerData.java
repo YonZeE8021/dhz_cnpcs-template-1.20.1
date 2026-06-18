@@ -34,7 +34,7 @@ import noppes.npcs.controllers.data.PlayerItemGiverData;
 import noppes.npcs.controllers.data.PlayerMailData;
 import noppes.npcs.controllers.data.PlayerQuestData;
 import noppes.npcs.controllers.data.PlayerScriptData;
-import noppes.npcs.controllers.data.PlayerSkinData;
+import noppes.npcs.controllers.data.PlayerTraderData;
 import noppes.npcs.controllers.data.PlayerTransportData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -54,6 +54,7 @@ public class PlayerData {
     public PlayerTransportData transportData = new PlayerTransportData();
     public PlayerFactionData factionData = new PlayerFactionData();
     public PlayerItemGiverData itemgiverData = new PlayerItemGiverData();
+    public PlayerTraderData traderData = new PlayerTraderData();
     public PlayerMailData mailData = new PlayerMailData();
     public PlayerSkinData skinData = new PlayerSkinData();
     public PlayerScriptData scriptData;
@@ -82,6 +83,7 @@ public class PlayerData {
         this.transportData.loadNBTData(data);
         this.factionData.loadNBTData(data);
         this.itemgiverData.loadNBTData(data);
+        this.traderData.loadNBTData(data);
         this.mailData.loadNBTData(data);
         this.skinData.loadNBTData(data);
         this.timers.load(data);
@@ -127,6 +129,7 @@ public class PlayerData {
         this.transportData.saveNBTData(compound);
         this.factionData.saveNBTData(compound);
         this.itemgiverData.saveNBTData(compound);
+        this.traderData.saveNBTData(compound);
         this.mailData.saveNBTData(compound);
         this.skinData.saveNBTData(compound);
         this.timers.save(compound);

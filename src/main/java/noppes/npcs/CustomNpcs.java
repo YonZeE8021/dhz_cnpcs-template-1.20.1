@@ -108,6 +108,7 @@ import noppes.npcs.controllers.ChunkController;
 import noppes.npcs.controllers.DialogController;
 import noppes.npcs.controllers.FactionController;
 import noppes.npcs.controllers.GlobalDataController;
+import noppes.npcs.controllers.TraderGlobalVariableController;
 import noppes.npcs.controllers.LinkedNpcController;
 import noppes.npcs.controllers.MassBlockController;
 import noppes.npcs.controllers.PixelmonHelper;
@@ -346,6 +347,7 @@ ServerLifecycleEvents.ServerStarted {
         new PlayerDataController();
         new TransportController();
         new GlobalDataController();
+        new TraderGlobalVariableController();
         new SpawnController();
         new LinkedNpcController();
         new MassBlockController();
